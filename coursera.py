@@ -1,6 +1,6 @@
 import sys
 import logging
-import xml.etree.ElementTree as ElementTree
+import xml.etree.ElementTree
 from argparse import ArgumentParser
 
 import requests
@@ -13,7 +13,7 @@ logger = logging.getLogger()
 def fetch_course_urls():
     xml_sitemap_url = 'https://www.coursera.org/sitemap~www~courses.xml'
     xml_list = requests.get(xml_sitemap_url).text
-    urlset = ElementTree.fromstring(xml_list)
+    urlset = xml.etree.ElementTree.fromstring(xml_list)
     course_urls = [url[0].text for url in urlset]
     return course_urls
 

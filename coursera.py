@@ -1,11 +1,14 @@
-import os
-from argparse import ArgumentParser
+import sys
+import logging
 import xml.etree.ElementTree as ElementTree
+from argparse import ArgumentParser
 
 import requests
 from bs4 import BeautifulSoup
 from openpyxl import Workbook
 
+logging.basicConfig(stream=sys.stdout, level=logging.INFO)
+logger = logging.getLogger()
 
 def fetch_course_urls():
     xml_sitemap_url = 'https://www.coursera.org/sitemap~www~courses.xml'
@@ -45,15 +48,18 @@ def output_courses_into_xlsx(courses, filepath):
 
 def parse_args(argv):
     parser = ArgumentParser()
-    parser.add_argument('--number_of_courses', type=int, default=20)
-    parser.add_argument('--filepath', type=str, default='output.xlsx')
+    parser.add_argument('--number_of_courses', '-n', type=int, default=20)
+    parser.add_argument('--filepath', '-f', type=str, default='output.xlsx')
     return parser.parse_args(argv)
 
 
 if __name__ == '__main__':
-    args = parse_args(os.argv[1:])
+    args = parse_args(sys.argv[1:])
+    logger.info('fetching course urls...')
     course_urls = fetch_course_urls()
     courses = []
     for course_url in course_urls[:args.number_of_courses]:
+        logger.info('fetching {0}...'.format(course_url))
         courses.append(fetch_course_info(course_url))
-    output_courses_into_xlsx(courses, 'text.xlsx')
+    output_courses_into_xlsx(courses, args.filepath)
+    logger.info('successfully saved to {0}'.format(args.filepath))

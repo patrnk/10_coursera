@@ -1,3 +1,5 @@
+import os
+from argparse import ArgumentParser
 import xml.etree.ElementTree as ElementTree
 
 import requests
@@ -30,7 +32,7 @@ def fetch_course_info(course_url):
     return course
 
 
-def output_courses_info_to_xlsx(courses, filepath):
+def output_courses_into_xlsx(courses, filepath):
     if not courses:
         raise ValueError('There must be at least one course to save')
     workbook = Workbook()
@@ -41,7 +43,17 @@ def output_courses_info_to_xlsx(courses, filepath):
     workbook.save(filepath)
 
 
+def parse_args(argv):
+    parser = ArgumentParser()
+    parser.add_argument('--number_of_courses', type=int, default=20)
+    parser.add_argument('--filepath', type=str, default='output.xlsx')
+    return parser.parse_args(argv)
+
+
 if __name__ == '__main__':
-    course = fetch_course_info('https://www.coursera.org/learn/algorithms-part1')
-    courses = [{'name': 'Gamification', 'languages': 'English, Subtitles: Ukrainian, Chinese (Simplified), Portuguese (Brazilian), Vietnamese, Russian, Turkish, Spanish, Kazakh', 'start_date': 'Starts Jul 17', 'rating': 'N/A', 'number_of_weeks': 6}, {'name': 'Algorithms, Part I', 'languages': 'English', 'start_date': 'Starts Jul 10', 'rating': '4.9 stars', 'number_of_weeks': 6}]
-    output_courses_info_to_xlsx(courses, 'text.xlsx')
+    args = parse_args(os.argv[1:])
+    course_urls = fetch_course_urls()
+    courses = []
+    for course_url in course_urls[:args.number_of_courses]:
+        courses.append(fetch_course_info(course_url))
+    output_courses_into_xlsx(courses, 'text.xlsx')

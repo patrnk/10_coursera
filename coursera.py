@@ -2,6 +2,7 @@ import xml.etree.ElementTree as ElementTree
 
 import requests
 from bs4 import BeautifulSoup
+from openpyxl import Workbook
 
 
 def fetch_course_urls():
@@ -29,10 +30,18 @@ def fetch_course_info(course_url):
     return course
 
 
-def output_courses_info_to_xlsx(filepath):
-    pass
+def output_courses_info_to_xlsx(courses, filepath):
+    if not courses:
+        raise ValueError('There must be at least one course to save')
+    workbook = Workbook()
+    worksheet = workbook.active
+    worksheet.append(list(courses[0].keys()))
+    for course in courses:
+        worksheet.append(list(course.values()))
+    workbook.save(filepath)
 
 
 if __name__ == '__main__':
     course = fetch_course_info('https://www.coursera.org/learn/algorithms-part1')
-    print(course)
+    courses = [{'name': 'Gamification', 'languages': 'English, Subtitles: Ukrainian, Chinese (Simplified), Portuguese (Brazilian), Vietnamese, Russian, Turkish, Spanish, Kazakh', 'start_date': 'Starts Jul 17', 'rating': 'N/A', 'number_of_weeks': 6}, {'name': 'Algorithms, Part I', 'languages': 'English', 'start_date': 'Starts Jul 10', 'rating': '4.9 stars', 'number_of_weeks': 6}]
+    output_courses_info_to_xlsx(courses, 'text.xlsx')

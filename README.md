@@ -3,9 +3,9 @@
 Saves Coursera course info to xlsx file.
 
 Since it's way too long to process all the courses,
-the script takes the first 20 of them. This can be changed using `-n` switch.
+the script takes the first 20 of them. (This can be changed using `-n` switch).
 
-By default, the results are saved to `output.xlsx` file. Change this with `-f` switch.
+By default, the results are saved to `output.xlsx` file. (Change this with `-f` switch).
 
 ### Usage example
 ```

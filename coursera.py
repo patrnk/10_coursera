@@ -6,9 +6,11 @@ from argparse import ArgumentParser
 import requests
 from bs4 import BeautifulSoup
 from openpyxl import Workbook
+from openpyxl.styles import Alignment
 
 logging.basicConfig(stream=sys.stdout, level=logging.INFO)
 logger = logging.getLogger()
+
 
 def fetch_course_urls():
     xml_sitemap_url = 'https://www.coursera.org/sitemap~www~courses.xml'
@@ -46,6 +48,10 @@ def output_courses_into_xlsx(courses, filepath):
         raise ValueError('There must be at least one course to save')
     workbook = Workbook()
     worksheet = workbook.active
+    worksheet.title = 'Coursera courses info'
+    worksheet.merge_cells('A1:E1')
+    worksheet.append([worksheet.title])
+    worksheet['A1'].alignment = Alignment(horizontal='center')
     worksheet.append(list(courses[0].keys()))
     for course in courses:
         worksheet.append(list(course.values()))

@@ -29,10 +29,16 @@ def fetch_course_info(course_url):
     }
     course = {}
     for tag_name, tag_content in tags.items():
-        course[tag_name] = tag_content.get_text() if tag_content else 'N/A'
+        course[tag_name] = tag_content.get_text() if tag_content else None
     weeks_tag = soup.find('div', class_='rc-WeekView')
-    course['number_of_weeks'] = len(weeks_tag.contents) if weeks_tag else 'N/A'
+    course['number_of_weeks'] = len(weeks_tag.contents) if weeks_tag else None
     return course
+
+
+def format_course_info(course_info):
+    for tag_name in course_info.keys():
+        course_info[tag_name] = course_info[tag_name] or 'N/A'
+    return course_info
 
 
 def output_courses_into_xlsx(courses, filepath):
@@ -60,6 +66,8 @@ if __name__ == '__main__':
     courses = []
     for course_url in course_urls[:args.number_of_courses]:
         logger.info('fetching {0}...'.format(course_url))
-        courses.append(fetch_course_info(course_url))
+        course_info = fetch_course_info(course_url)
+        formatted_course_info = format_course_info(course_info)
+        courses.append(formatted_course_info)
     output_courses_into_xlsx(courses, args.filepath)
     logger.info('successfully saved to {0}'.format(args.filepath))
